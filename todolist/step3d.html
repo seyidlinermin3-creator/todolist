@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Step 3D - Update Task</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; }
+h2 { text-align: center; color: #333; margin-bottom: 20px; }
+#updateTaskContainer { background: #fff; padding: 20px; border-radius: 10px; max-width: 1000px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+th, td { border: 1px solid #ccd1d9; padding: 10px; text-align: left; }
+th { background-color: #007bff; color: white; }
+.status-button { margin: 2px; padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; color: white; font-size: 12px; }
+.Pending { background: #6c757d; }
+.InProgress { background: #ffc107; color: #000; }
+.Completed { background: #28a745; }
+.Cancelled { background: #dc3545; }
+.status-button:disabled { opacity: 0.6; cursor: default; }
+.bottom-buttons { text-align: center; margin-top: 20px; }
+.bottom-buttons button { margin: 5px; padding: 10px 20px; font-size: 16px; border: none; border-radius: 6px; cursor: pointer; color: white; }
+#addTaskBtn { background-color: #28a745; }
+#addTaskBtn:hover { background-color: #218838; }
+#goDashboardBtn { background-color: #007bff; }
+#goDashboardBtn:hover { background-color: #0069d9; }
+</style>
+</head>
+<body>
+
+<div id="updateTaskContainer">
+    <h2>Update Task Status (Step 3D)</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Due Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="taskDashboardBody"></tbody>
+    </table>
+
+    <div class="bottom-buttons">
+        <button id="addTaskBtn" onclick="goToAddTask()">Add New Task</button>
+        <button id="goDashboardBtn" onclick="goToDashboard()">Go to Dashboard</button>
+    </div>
+</div>
+
+<script>
+let taskList = [];
+let selectedTaskId = null;
+
+function loadTasks() {
+    const saved = localStorage.getItem("taskList");
+    if (saved) taskList = JSON.parse(saved);
+
+    selectedTaskId = localStorage.getItem("updateTaskId");
+}
+
+function saveTasks() {
+    localStorage.setItem("taskList", JSON.stringify(taskList));
+}
+
+// Status update function
+function updateStatus(button) {
+    const taskId = button.dataset.taskid;
+    const newStatus = button.dataset.status;
+
+    const task = taskList.find(t => t.id == taskId);
+    if (!task) return;
+
+    task.status = newStatus;
+    saveTasks();
+    alert(`Status updated to: ${newStatus}`);
+    displayTask();
+}
+
+// Display ONLY selected task
+function displayTask() {
+    const tbody = document.getElementById("taskDashboardBody");
+    tbody.innerHTML = "";
+
+    const task = taskList.find(t => t.id == selectedTaskId);
+
+    if (!task) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;">Task not found.</td></tr>`;
+        return;
+    }
+
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+        <td>${task.id}</td>
+        <td>${task.title}</td>
+        <td>${task.description}</td>
+        <td>${task.category}</td>
+        <td>${task.status}</td>
+        <td>${task.priority}</td>
+        <td>${task.dueDate || ""}</td>
+        <td>
+            <button class="status-button Pending"
+                data-taskid="${task.id}"
+                data-status="Pending"
+                onclick="updateStatus(this)"
+                ${task.status === "Pending" ? "disabled" : ""}>Pending</button>
+
+            <button class="status-button InProgress"
+                data-taskid="${task.id}"
+                data-status="In Progress"
+                onclick="updateStatus(this)"
+                ${task.status === "In Progress" ? "disabled" : ""}>In Progress</button>
+
+            <button class="status-button Completed"
+                data-taskid="${task.id}"
+                data-status="Completed"
+                onclick="updateStatus(this)"
+                ${task.status === "Completed" ? "disabled" : ""}>Completed</button>
+
+            <button class="status-button Cancelled"
+                data-taskid="${task.id}"
+                data-status="Cancelled"
+                onclick="updateStatus(this)"
+                ${task.status === "Cancelled" ? "disabled" : ""}>Cancelled</button>
+        </td>
+    `;
+    tbody.appendChild(row);
+}
+
+function goToAddTask() {
+    window.location.href = "index.html";
+}
+
+function goToDashboard() {
+    window.location.href = "step3c.html";
+}
+
+// Init
+document.addEventListener("DOMContentLoaded", () => {
+    loadTasks();
+    displayTask();
+});
+</script>
+
+</body>
+</html>

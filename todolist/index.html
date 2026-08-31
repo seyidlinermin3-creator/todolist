@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Step 3B - Add New Task</title>
+<style>
+body { font-family: Arial, sans-serif; background: #f4f6f8; padding: 20px; }
+#formContainer { background: #fff; max-width: 600px; margin: 0 auto; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+h2 { text-align: center; margin-bottom: 20px; }
+label { font-weight: bold; }
+input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; }
+button { width: 100%; background: #007bff; color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; }
+button:hover { background: #0069d9; }
+#goDashboardBtn { background-color: #28a745; }
+#goDashboardBtn:hover { background-color: #218838; }
+</style>
+</head>
+<body>
+
+<div id="formContainer">
+    <h2>Add New Task (Step 3B)</h2>
+
+    <label>Task Title:</label>
+    <input type="text" id="taskTitle" placeholder="Enter task title">
+
+    <label>Description:</label>
+    <textarea id="taskDescription" rows="3" placeholder="Enter description"></textarea>
+
+    <label>Category:</label>
+    <select id="taskCategory">
+        <option value="">-- Select Category --</option>
+        <option value="Work">Work</option>
+        <option value="School">School</option>
+        <option value="Personal">Personal</option>
+    </select>
+
+    <label>Status:</label>
+    <select id="taskStatus">
+        <option value="">-- Select Status --</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+    </select>
+
+    <label>Priority:</label>
+    <select id="taskPriority">
+        <option value="">-- Select Priority --</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+    </select>
+
+    <label>Due Date:</label>
+    <input type="date" id="taskDueDate">
+
+    <button onclick="saveTask()">Save Task</button>
+    <button type="button" id="goDashboardBtn" onclick="goToDashboard()">Go to Dashboard</button>
+</div>
+
+<script>
+function saveTask() {
+    let title = document.getElementById('taskTitle').value.trim();
+    let description = document.getElementById('taskDescription').value.trim();
+    let category = document.getElementById('taskCategory').value;
+    let status = document.getElementById('taskStatus').value;
+    let priority = document.getElementById('taskPriority').value;
+    let dueDate = document.getElementById('taskDueDate').value;
+
+    if (!title || !description || !category || !status || !priority) {
+        alert("Please fill out all fields.");
+        return;
+    }
+
+    let taskList = JSON.parse(localStorage.getItem("taskList") || "[]");
+
+    const newTask = {
+        id: Date.now(),
+        title,
+        description,
+        category,
+        status,
+        priority,
+        dueDate
+    };
+
+    taskList.push(newTask);
+    localStorage.setItem("taskList", JSON.stringify(taskList));
+
+    alert("Task added successfully!");
+    window.location.href = "step3c.html"; // go to dashboard
+}
+
+function goToDashboard() {
+    window.location.href = "step3c.html";
+}
+</script>
+</body>
+</html>
